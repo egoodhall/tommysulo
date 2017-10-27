@@ -1,0 +1,74 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript">
+  google.charts.load("current", {packages:["timeline"]});
+  google.charts.setOnLoadCallback(drawChart);
+  function createRows(data) {
+    var rows = []
+
+    Object.keys(data).forEach(function(fu) {
+        rows.push([ fu, '', -500, -500, null ]);
+        rows.push([ fu, '', 19500, 19500, null ]);
+      Object.keys(data[fu]).forEach(function(instr) {
+        console.log(instr);
+        data[fu][instr].forEach(function(dur) {
+          console.log([fu, instr, dur['start'], dur['end']]);
+          rows.push([fu, instr, (dur['start']-0.5)*1000, (dur['end']-0.5)*1000, "" + instr]);  
+        });
+      });
+    });
+
+    return rows;
+  }
+
+  var data = {
+    'INT1': {
+      'ADD': [
+        { start: 1, end: 2 },
+        { start: 3, end: 4 }
+      ],
+      'DIV': [
+        { start: 2, end: 3 },
+        { start: 5, end: 7 }
+      ]
+    },
+    'INT2': {
+      'SUB': [
+        { start: 2, end: 3 },
+        { start: 5, end: 6 }
+      ],
+      'MULT': [
+        { start: 1, end: 2 },
+        { start: 3, end: 5 }
+      ]
+    }
+  };
+
+  function drawChart() {
+
+    var container = document.getElementById('example3.1');
+    var chart = new google.visualization.Timeline(container);
+    var dataTable = new google.visualization.DataTable();
+
+    dataTable.addColumn({ type: 'string', id: 'Position' });
+    dataTable.addColumn({ type: 'string', id: 'Name' });
+    dataTable.addColumn({ type: 'number', id: 'Start' });
+    dataTable.addColumn({ type: 'number', id: 'End' });
+    dataTable.addColumn({ type: 'string', role: 'tooltip' });
+
+    dataTable.addRows(createRows(data));
+
+
+    var options = {
+      backgroundColor: 'white',
+      // timeline: {
+      //   showBarLabels: false
+      // }
+    };
+
+    chart.draw(dataTable, options);
+  }
+
+</script>
+
+<div id="example3.1" style="height: 200px;"></div>
