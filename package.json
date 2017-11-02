@@ -1,26 +1,20 @@
 {
-  "name": "node_skeleton",
+  "name": "tommysulo",
   "version": "0.1.0",
-  "description": "A skeleton for node projects with babel, eslint, and gulp",
-  "main": "index.js",
-  "scripts": {
-    "lint": "./node_modules/.bin/eslint src",
-    "start": "nodemon --exec ./node_modules/babel-cli/bin/babel-node.js src/index.js",
-    "clean": "rm -rf ./build",
-    "build": "rm -rf ./build && gulp"
+  "private": true,
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-scripts": "1.0.16"
   },
-  "author": "Eric Marshall",
-  "license": "MIT",
-  "dependencies": {},
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom"
+  },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-eslint": "^7.2.3",
-    "babel-preset-env": "^1.6.0",
-    "eslint": "^3.19.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0",
-    "gulp-delete-lines": "^0.0.7",
-    "gulp-json-editor": "^2.2.1",
-    "nodemon": "^1.11.0"
+    "babel-eslint": "^8.0.1",
+    "eslint": "^4.10.0"
   }
 }
