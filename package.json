@@ -11,10 +11,12 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom"
+    "test": "react-scripts test --env=jsdom",
+    "calc": "./node_modules/babel-cli/bin/babel-node.js src/calculation/index.js"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.1",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.2",
     "eslint": "^4.10.0"
   }
 }
