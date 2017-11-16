@@ -1,7 +1,7 @@
 
 import _ from 'lodash';
 
-const doneExecuting = (fu) => fu.cyclesRemaining === -1 && fu.instr !== null;
+const doneExecuting = (fu) => fu.cyclesRemaining === 0 && fu.instr !== null;
 
 const calculate = (snapshot, fu) => {
   switch (fu.instr.op) {

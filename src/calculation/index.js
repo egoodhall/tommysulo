@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { readFile } from 'fs';
 import { join } from 'path';
 
@@ -11,15 +13,25 @@ const step = (snapshot) => {
   return issueRes(issueFun(crunch(write(copyOf(snapshot)))));
 };
 
+const snapshotWorking = (snapshot) => {
+  const resStationBusy = _(snapshot.resStations).values().flatten().reduce((acc, station) => {
+    return acc || station.instr !== null;
+  }, false);
+  console.log(resStationBusy);
+  return snapshot.pc < snapshot.instr.length || resStationBusy;
+};
+
 const main = (code) => {
   // Snapshot history
   const snapshots = [buildSnapshot({ instr: code })];
 
   // Run 20 cycles
   let i = 0;
-  while (i++ < 11) {
-    console.log(`\n\n---- Tick: ${i} ----\n\n`);
+  let snapshot = snapshots[0];
+  while (i === 0 || snapshotWorking(snapshot)) {
+    console.log(`\n\n---- Tick: ${i++} ----\n\n`);
     snapshots.push(step(snapshots[snapshots.length - 1]));
+    snapshot = snapshots[snapshots.length - 1];
   }
   console.log(JSON.stringify(snapshots[snapshots.length - 1].registers, null, 2));
 };
