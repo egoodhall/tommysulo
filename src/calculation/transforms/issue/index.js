@@ -4,4 +4,4 @@ import { issue as issueFun } from './functionalUnits';
 export {
   issueRes,
   issueFun
-}
+};

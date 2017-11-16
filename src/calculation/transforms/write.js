@@ -1,50 +1,55 @@
 
 import _ from 'lodash';
 
-const doneExecuting = (fu) => fu.cyclesRemaining === 0;
+const doneExecuting = (fu) => fu.cyclesRemaining === -1 && fu.instr !== null;
 
 const calculate = (snapshot, fu) => {
-  switch (fu.aluOp) {
-    case 'ADD': return fu.op1Reg + fu.op2Reg;
-    case 'SUB': return fu.op1Reg - fu.op2Reg;
-    case 'MUL': return fu.op1Reg * fu.op2Reg;
-    case 'DIV': return Math.floor(fu.op1Reg / fu.op2Reg);
-    case 'LD': return snapshot.memory[fu.op1Reg + fu.op2Reg];
-    case 'ST': snapshot.memory[fu.op1Reg + fu.op2Reg] = fu.destReg; break;
+  switch (fu.instr.op) {
+    case 'ADD': return fu.instr.j + fu.instr.k;
+    case 'SUB': return fu.instr.j - fu.instr.k;
+    case 'MUL': return fu.instr.j * fu.instr.k;
+    case 'DIV': return Math.floor(fu.instr.j / fu.instr.k);
+    case 'LD': return snapshot.memory[fu.instr.j + fu.instr.k];
+    case 'ST': snapshot.memory[fu.instr.j + fu.instr.k] = fu.instr.i; break;
     default: return null;
   }
   return null;
 };
 
 const write = (snapshot) => {
-  _(snapshot.functionalUnits).forEach((fu) => {
-    if (doneExecuting(fu)) {
-      // Reservation station waiting for the FU
-      const currStation = _.find(snapshot.resStations, station => station.FU === fu);
+  console.log('Performing writes');
+  _(snapshot.functionalUnits).values().flatten().filter(doneExecuting).forEach((fu) => {
+    console.log(`  Writing '${fu.instr.op} ${fu.instr.i} ${fu.instr.j} ${fu.instr.k}'`);
 
-      // Calculate the result
-      const result = calculate(snapshot, fu);
+    // Reservation station waiting for the FU
+    const currStation = _(snapshot.resStations).values().flatten()
+      .find((station) => station.FU === fu.id) || null;
 
-      // Write to any waiting reservation stations
-      _.forEach(snapshot.resStations, (station) => {
-        if (station.op1Reg === currStation) {
-          station.op1Reg = result;
-        }
-        if (station.op2Reg === currStation) {
-          station.op2Reg = result;
-        }
-      });
+    // Calculate the result
+    const result = calculate(snapshot, fu);
 
-      // Only update if is still the last one
-      if (snapshot.rat[fu.destReg] === currStation) {
-        // Write back to registers
-        snapshot.registers[fu.destReg] = result;
-
-        // Update RAT
-        snapshot.rat[fu.destReg] = null;
+    // Write to any waiting reservation stations
+    _(snapshot.resStations).values().flatten().filter((station) => station.instr !== null).forEach((station) => {
+      if (station.instr.j === currStation.id) {
+        station.instr.j = result;
       }
-
+      if (station.instr.k === currStation.id) {
+        station.instr.k = result;
+      }
+    });
+    // Only update if is still in the RAT
+    if (snapshot.rat[parseInt(fu.instr.i.slice(1), 10)] === currStation.id) {
+      // Update RAT
+      snapshot.rat[parseInt(fu.instr.i.slice(1), 10)] = null;
     }
+
+    // Write back to registers
+    snapshot.registers[parseInt(fu.instr.i.slice(1), 10)] = result;
+
+    // Clear FU and reservation station
+    currStation.instr = null;
+    currStation.FU = null;
+    fu.instr = null;
   });
   return snapshot;
 };

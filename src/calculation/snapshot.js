@@ -3,67 +3,109 @@ import _ from 'lodash';
 const regCount = 8;
 
 const snapshotBase = {
-  resStations: [],
-  functionalUnits: [],
+  resStations: {
+    INT: [],
+    MUL: [],
+    DIV: []
+  },
+  functionalUnits: {
+    INT: [],
+    MUL: [],
+    DIV: []
+  },
   registers: Array(regCount),
   memory: {},
   rat: Array(regCount),
   instr: [],
+  instrHist: [],
   pc: 0
 };
 
 const resStationBase = {
-  destReg: null,
-  op1Reg: null,
-  op2Reg: null,
+  instr: null,
+  type: null,
   FU: null,
-  AluOp: null,
-  instrIdx: null
+  id: null
 };
 
 const functionalUnitBase = {
-  op1Reg: null,
-  op2Reg: null,
-  aluOp: null,
+  instr: null,
   type: null,
-  cyclesRemaining: -1
+  cyclesRemaining: -1,
+  id: null
 };
 
 const instructionBase = {
-  string: '',
-  state: 'I' // IEW(C)
+  op: undefined,
+  i: undefined,
+  j: undefined,
+  k: undefined,
+  state: null
 };
 
 
-const duplicate = (json) => {
+const copyOf = (json) => {
   return JSON.parse(JSON.stringify(json));
 };
 
 
 const parseInstr = (instructions) => {
-  return _(instructions.split(/\n/)).map((instr, idx) => {
-    const components = instr.split(/\s+/);
-
-    return { op1Reg: , op2Reg: , destReg: }
+  // Instructions can be separated by '\n' or ';'
+  return _.map(instructions.split(/\n|;/), (instr) => {
+    // Use a regex match to pull important info
+    instr = _.trim(instr);
+    const match = instr.match(/(ADD|SUB|MUL|DIV)\s+(R[0-9]+)\s+(R?[0-9]+)\s+(R?[0-9]+)\s*/) // R-type
+               || instr.match(/(LD|ST)\s+(R[0-9]+)\s+([0-9]+)\s*\(\s*(R[0-9]+)\s*\)\s*/); // Load/Store offset
+    // If there's a match, return it, otherwise null (will crash the program)
+    if (match !== null) {
+      const parsedInstr = {
+        op: match[1],
+        i: match[2],
+        j: parseInt(match[3], 10) || match[3],
+        k: parseInt(match[4], 10) || match[4]
+      };
+      return _.assign(copyOf(instructionBase), parsedInstr);
+    }
+    return null;
   });
 };
 
 
-const buildSnapshot = (resStations = 3, instr = '', functionalUnits = { INT: 2, MUL: 1, DIV: 1 }) => {
-
-  const snapshot = duplicate(snapshotBase);
-
-  // Reservation stations
-  for (var i = 0; i < resStations; i++) {
-    snapshot.resStations.push(duplicate(resStationBase));
+// Options for the snapshot builder
+const defaultOptions = {
+  instr: '',
+  functionalUnits: {
+    INT: {
+      count: 2,
+      resStations: 3
+    },
+    MUL: {
+      count: 1,
+      resStations: 2
+    },
+    DIV: {
+      count: 1,
+      resStations: 2
+    }
   }
+};
 
-  // Functional Units
-  _.forEach(_.keys(functionalUnits), (key) => {
-    for (i = 0; i < functionalUnits[key]; i++) {
-      const fu = duplicate(functionalUnitBase);
-      fu.type = key;
-      snapshot.functionalUnits.push(fu);
+
+const buildSnapshot = (options) => {
+
+  const { instr, functionalUnits } = _.assign(defaultOptions, options);
+
+  const snapshot = copyOf(snapshotBase);
+
+  _.forEach(_.keys(functionalUnits), (type) => {
+    const fuDesc = functionalUnits[type];
+    // Add reservation stations to snapshot
+    for (var i = 0; i < fuDesc.resStations; i++) {
+      snapshot.resStations[type].push(_.assign(copyOf(resStationBase), { type: type, id: `RS ${type} ${i}` }));
+    }
+    // Add functional units to snapshot
+    for (i = 0; i < fuDesc.count; i++) {
+      snapshot.functionalUnits[type].push(_.assign(copyOf(functionalUnitBase), { type: type, id: `FU ${type} ${i}` }));
     }
   });
 
@@ -77,6 +119,6 @@ const buildSnapshot = (resStations = 3, instr = '', functionalUnits = { INT: 2, 
 };
 
 export {
-  duplicate,
+  copyOf,
   buildSnapshot
 };
