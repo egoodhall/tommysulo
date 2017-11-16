@@ -1,15 +1,22 @@
 import _ from 'lodash';
 
-const isCrunching = ({ cyclesRemaining }) => cyclesRemaining > -1;
+
+const isCrunching = ({ cyclesRemaining }) => {
+  return cyclesRemaining > -1;
+};
+
 
 const crunch = (snapshot) => {
-  _(snapshot.functionalUnits).forEach((fu) => {
-    if (isCrunching(fu)) {
-      fu.cyclesRemaining--;
-    }
+  console.log('Performing calculations');
+  _(snapshot.functionalUnits).values().flatten().filter(isCrunching).forEach((fu) => {
+    console.log(`  Crunch '${fu.instr.op} ${fu.instr.i} ${fu.instr.j} ${fu.instr.k}'`);
+
+    // Decrement the number of cycles remaining
+    fu.cyclesRemaining--;
   });
-  return snapshot
+  return snapshot;
 };
+
 
 export {
   crunch
