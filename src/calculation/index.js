@@ -10,7 +10,7 @@ import { write } from './transforms/write';
 
 const step = (snapshot) => {
   // Writes then crunches then issues (functional units then reservation stations)
-  return issueRes(issueFun(crunch(write(copyOf(snapshot)))));
+  return issueRes(crunch(issueFun(write(snapshot))));
 };
 
 const snapshotWorking = (snapshot) => {
@@ -22,18 +22,22 @@ const snapshotWorking = (snapshot) => {
 };
 
 const main = (code) => {
-  // Snapshot history
-  const snapshots = [buildSnapshot({ instr: code })];
-
-  // Run 20 cycles
   let i = 0;
-  let snapshot = snapshots[0];
-  while (i === 0 || snapshotWorking(snapshot)) {
-    console.log(`\n\n---- Tick: ${i++} ----\n\n`);
-    snapshots.push(step(snapshots[snapshots.length - 1]));
-    snapshot = snapshots[snapshots.length - 1];
+  let snapshot = buildSnapshot({ instr: code });
+
+  // Snapshot history
+  const snapshots = [copyOf(snapshot)];
+  while (i === 0 || snapshotWorking(snapshot) && i < 12) {
+    console.log(`\n\n---- Tick: ${++i} ----\n\n`);
+    snapshot.cycle = i;
+    snapshot = step(snapshot)
+    snapshots.push(copyOf(snapshot));
+    // console.log(JSON.stringify(snapshots[snapshots.length - 1], null, 2));
   }
   console.log(JSON.stringify(snapshots[snapshots.length - 1].registers, null, 2));
+  // console.log(JSON.stringify(snapshots[snapshots.length - 1].resStations, null, 2));
+  // console.log(JSON.stringify(snapshots[snapshots.length - 1].functionalUnits, null, 2));
+  console.log(JSON.stringify(snapshots[snapshots.length - 1].instrHist, null, 2));
 };
 
 

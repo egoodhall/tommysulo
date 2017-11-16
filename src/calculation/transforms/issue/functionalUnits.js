@@ -50,16 +50,17 @@ const issue = (snapshot) => {
   _(snapshot.resStations).values().flatten()
     .filter(stationFilled).filter(instrReady)
     .forEach((station) => {
-      console.log(`  Issued '${station.instr.op} ${station.instr.i} ${station.instr.j} ${station.instr.k}'`);
-
       // Get an available functional unit
       const unit = getAvailableFU(station.instr.op, _.values(snapshot.functionalUnits).flatten()) || null;
 
       // Assign if the station's operands are ready and there is an available FU
       if (isReady(station) && unit !== null) {
+        console.log(`  Issued '${station.instr.state.instruction.op} ${station.instr.state.instruction.i} ${station.instr.state.instruction.j} ${station.instr.state.instruction.k}'`);
         unit.instr = station.instr;
-        station.FU = unit.id;
         setLatency(unit);
+        station.instr.state.funcUnit.push(unit.id, snapshot.cycle, snapshot.cycle + unit.cyclesRemaining - 1)
+        station.instr.state.steps.E.push(snapshot.cycle, snapshot.cycle + unit.cyclesRemaining - 1)
+        station.FU = unit.id;
       }
     });
 

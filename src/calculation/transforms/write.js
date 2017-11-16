@@ -19,7 +19,7 @@ const calculate = (snapshot, fu) => {
 const write = (snapshot) => {
   console.log('Performing writes');
   _(snapshot.functionalUnits).values().flatten().filter(doneExecuting).forEach((fu) => {
-    console.log(`  Writing '${fu.instr.op} ${fu.instr.i} ${fu.instr.j} ${fu.instr.k}'`);
+    console.log(`  Writing '${fu.instr.state.instruction.op} ${fu.instr.state.instruction.i} ${fu.instr.state.instruction.j} ${fu.instr.state.instruction.k}'`);
 
     // Reservation station waiting for the FU
     const currStation = _(snapshot.resStations).values().flatten()
@@ -47,9 +47,11 @@ const write = (snapshot) => {
     snapshot.registers[parseInt(fu.instr.i.slice(1), 10)] = result;
 
     // Clear FU and reservation station
+    currStation.instr.state.steps.W.push(snapshot.cycle, snapshot.cycle)
     currStation.instr = null;
     currStation.FU = null;
     fu.instr = null;
+    fu.cyclesRemaining = -1;
   });
   return snapshot;
 };

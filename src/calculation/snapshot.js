@@ -18,7 +18,8 @@ const snapshotBase = {
   rat: Array(regCount),
   instr: [],
   instrHist: [],
-  pc: 0
+  pc: 0,
+  cycle: 1
 };
 
 const resStationBase = {

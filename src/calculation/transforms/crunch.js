@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 
 const isCrunching = ({ cyclesRemaining }) => {
-  return cyclesRemaining > -1;
+  return cyclesRemaining > 0;
 };
 
 

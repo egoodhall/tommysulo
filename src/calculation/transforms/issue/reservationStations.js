@@ -29,7 +29,7 @@ const updateWaitingOperand = (instr, operand, snapshot) => {
     if (ratVal !== null) {
       instr[operand] = ratVal;
     } else {
-      instr[operand] = snapshot.registers(instr[operand]);
+      instr[operand] = snapshot.registers[parseInt(instr[operand].slice(1), 10)];
     }
   }
 };
@@ -52,9 +52,19 @@ const issue = (snapshot) => {
 
       // Create a copy of the instruction at PC and push to the history
       const instr = copyOf(snapshot.instr[snapshot.pc++]);
+      instr.state = {
+        instruction: copyOf(instr),
+        steps: { 
+          I: [snapshot.cycle, snapshot.cycle],
+          E: [],
+          W: []
+        },
+        resStation: [station.id, snapshot.cycle, snapshot.cycle],
+        funcUnit: []
+      }
       snapshot.instrHist.push(instr);
 
-      console.log(`  Issued '${instr.op} ${instr.i} ${instr.j} ${instr.k}'`);
+      console.log(`  Issued '${instr.state.instruction.op} ${instr.state.instruction.i} ${instr.state.instruction.j} ${instr.state.instruction.k}'`);
 
       // Update operands if they need to wait for other instructions
       updateWaitingOperand(instr, 'j', snapshot);
