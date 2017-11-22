@@ -1,55 +1,125 @@
 import _ from 'lodash';
 
-import { readFile } from 'fs';
-import { join } from 'path';
-
 import { buildSnapshot, copyOf } from './snapshot';
 import { issueRes, issueFun } from './transforms/issue';
 import { crunch } from './transforms/crunch';
 import { write } from './transforms/write';
 
+//============//
+// STATE DATA //
+//============//
+
+let leadSnapshot = null;
+const allSnapshots = [];
+
+//============//
+
+
+/*
+ * Step the given snapshot forward 1 cycle. Performs all necessary steps in
+ * Tomasulo's algorithm
+ */
 const step = (snapshot) => {
   // Writes then crunches then issues (functional units then reservation stations)
   return issueRes(crunch(issueFun(write(snapshot))));
 };
 
+
+/*
+ * Returns whether or not the snapshot has reservation stations that are still busy
+ */
 const snapshotWorking = (snapshot) => {
   const resStationBusy = _(snapshot.resStations).values().flatten().reduce((acc, station) => {
     return acc || station.instr !== null;
   }, false);
-  console.log(resStationBusy);
   return snapshot.pc < snapshot.instr.length || resStationBusy;
 };
 
-const main = (code) => {
-  let i = 0;
-  let snapshot = buildSnapshot({ instr: code });
 
-  // Snapshot history
-  const snapshots = [copyOf(snapshot)];
-  while (i === 0 || snapshotWorking(snapshot) && i < 12) {
-    console.log(`\n\n---- Tick: ${++i} ----\n\n`);
-    snapshot.cycle = i;
-    snapshot = step(snapshot)
-    snapshots.push(copyOf(snapshot));
-    // console.log(JSON.stringify(snapshots[snapshots.length - 1], null, 2));
+/*
+ * Retrieve a snapshot of a given cycle, or calculate up to the point that we
+ * are at the chosen cycle, and return that snapshot.
+ */
+const getSnapshot = (cycle) => {
+  cycle = (cycle <= 0) ? 1 : cycle;
+  // If we already have the snapshot, give it
+  if (allSnapshots.length >= cycle) {
+    return allSnapshots[cycle - 1];
   }
-  console.log(JSON.stringify(snapshots[snapshots.length - 1].registers, null, 2));
-  // console.log(JSON.stringify(snapshots[snapshots.length - 1].resStations, null, 2));
-  // console.log(JSON.stringify(snapshots[snapshots.length - 1].functionalUnits, null, 2));
-  console.log(JSON.stringify(snapshots[snapshots.length - 1].instrHist, null, 2));
+
+  // Otherwise, calculate either until we do, or we hit the end
+  let i = allSnapshots.length - 1;
+  while (i === 0 || snapshotWorking(leadSnapshot) && i < cycle) {
+    console.log(`\n\n---- Tick: ${++i} ----\n\n`);
+    leadSnapshot.cycle = i;
+    leadSnapshot = step(leadSnapshot);
+    allSnapshots.push(copyOf(leadSnapshot));
+  }
+  return allSnapshots[allSnapshots.length - 1];
 };
 
 
-// Load and run code from the file
-readFile(join(__dirname, 'test.asm'), 'utf8', (err, data) => {
-  if (err) {
-    console.log(err);
-    return;
+/*
+ * Pull out the states of the instructions in a snapshot. This is the data that
+ * is needed to populate the UI
+ */
+const getStates = ({ instrHist }) => _.map(instrHist, (instr) => instr.state);
+
+
+/*
+ * Validate input code. Makes sure the code is valid for parsing/running.
+ */
+const validate = (code) => {
+  if (code) {
+    return true;
   }
-  main(data);
-});
+  return false;
+};
+
+
+/*
+ * Initialize. This should be run before requesting a snapshot to ensure the
+ * first one is built and ready.
+ */
+const init = (instr) => {
+  if (validate(instr)) {
+    leadSnapshot = buildSnapshot({ instr });
+    allSnapshots.length = 0;
+    allSnapshots.push(copyOf(leadSnapshot));
+    return true;
+  }
+  return false;
+};
+
+
+//===========================//
+// MAIN CODE (DEMONSTRATION) //
+//===========================//
+if (typeof require !== undefined && require.main === module) {
+
+  // Have the code
+  const code = _.trim(`
+  ADD R1 1 4
+  SUB R0 R1 1
+  ADD R2 R1 R0
+  ADD R1 2 4
+  `);
+
+  // Validate the code
+  const valid = init(code);
+
+  // If it's valid, you can request a snapshot!
+  if (valid) {
+    console.log('7', getStates(getSnapshot(7)), null, 2);
+  } else {
+    console.log('Code invalid');
+  }
+
+}
+//===========================//
 
 export {
-  step
+  init,
+  getSnapshot,
+  getStates
 };

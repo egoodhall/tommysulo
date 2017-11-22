@@ -54,14 +54,14 @@ const issue = (snapshot) => {
       const instr = copyOf(snapshot.instr[snapshot.pc++]);
       instr.state = {
         instruction: copyOf(instr),
-        steps: { 
+        steps: {
           I: [snapshot.cycle, snapshot.cycle],
           E: [],
           W: []
         },
         resStation: [station.id, snapshot.cycle, snapshot.cycle],
         funcUnit: []
-      }
+      };
       snapshot.instrHist.push(instr);
 
       console.log(`  Issued '${instr.state.instruction.op} ${instr.state.instruction.i} ${instr.state.instruction.j} ${instr.state.instruction.k}'`);
