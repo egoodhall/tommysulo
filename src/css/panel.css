@@ -1,0 +1,38 @@
+.panel {
+  text-align: left;
+  display: inline-block;
+}
+
+.panel-primary {
+  border-color: #073763 !important;
+}
+
+.panel-primary .panel-heading {
+  text-align: center;
+  background-color: #073763 !important;
+  background-image: none !important;
+}
+
+.panel-primary .btn-primary {
+  border-color: #073763 !important;
+  background-color: #073763 !important;
+  background-image: none !important;
+}
+
+.panel-primary .btn-primary:hover {
+  background-color: #095191 !important;
+}
+
+.panel-primary .form-group {
+  margin-bottom: 0;
+  margin-right: 0;
+}
+
+.panel-primary li.active a {
+  background-color: #073763 !important;
+  color: #fff !important;
+}
+
+.panel-primary li a {
+  color: #073763 !important;
+}

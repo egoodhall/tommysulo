@@ -1,0 +1,147 @@
+table.inst-table, table.rs-table {
+  border-collapse: collapse;
+  font-size: 12px;
+  display: inline-block;
+  overflow: visible;
+  background-color: white;
+  width: fit-content;
+  color: black;
+}
+
+table.inst-table td, table.rs-table td, table.inst-table th, table.rs-table th {
+  border: 1px solid black;
+  text-align: center;
+  min-width: 45px;
+  height: 20px;
+  cursor: default;
+}
+
+table.inst-table th, table.rs-table th {
+  background-color: #073763;
+  color: white;
+}
+
+
+table.inst-table thead tr:nth-child(2) th:nth-child(-n+5) {
+  border-right: 0px solid black;
+  border-left: 0px solid black;
+}
+
+table.inst-table thead tr:nth-child(2) {
+  border-left: 1px solid black;
+}
+
+table.inst-table tbody {
+  border: 1px solid black;
+  border-top: 0px;
+}
+
+table.inst-table tbody tr:last-child td {
+  border-bottom: 0px;
+}
+
+table.inst-table tbody td {
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-bottom: 1px solid black;
+}
+
+table.inst-table tbody td:nth-child(5) {
+  border-right: 1px solid black;
+}
+
+table.inst-table tbody td:nth-child(n+5) {
+  border-right: 1px solid black;
+}
+
+/*table.inst-table tbody td:last-child {
+  border-right: 0px;
+  margin-right: 0px;
+}*/
+
+table.inst-table tbody {
+  padding-right: 0px;
+  border-right: 0px;
+  margin-right: 0px
+}
+
+/*table.inst-table tbody tr:nth-child(2n), table.rs-table tbody tr:nth-child(2n), table.inst-table tfoot tr:nth-child(2n), table.rs-table tfoot tr:nth-child(2n) {
+  background-color: #c9daf8;
+}*/
+
+table.inst-table tfoot tr:first-child td, table.inst-table tfoot tr:first-child th {
+  border-top: 0px;
+}
+
+/* ================== rs-table ================== */
+
+table.rs-table td:first-child {
+  width: 230px;
+}
+
+table.rs-table {
+  border-right: 10px solid black;
+}
+
+table.rs-table thead td {
+  border-top: 0px;
+}
+
+table.rs-table th {
+  font-weight: normal;
+}
+
+/* ================== y-scrollable ================== */
+
+table.y-scrollable thead, table.y-scrollable tfoot {
+  display: block;
+  border-right: 10px solid black;
+}
+
+table.y-scrollable thead tr td:last-child,
+table.y-scrollable thead tr th:last-child,
+table.y-scrollable tfoot td:last-child,
+table.y-scrollable tfoot th:last-child {
+  border-right: 0px;
+}
+
+table.y-scrollable tbody {
+  display: block;
+  overflow-y: scroll;
+  scroll-snap-type: block;
+}
+
+table.y-scrollable tbody::-webkit-scrollbar-track {
+  border-top: 0px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+	background-color: #F5F5F5;
+}
+
+table.y-scrollable tbody::-webkit-scrollbar {
+  width: 10px;
+  height: 100px;
+	background-color: #F5F5F5;
+}
+
+table.y-scrollable tbody::-webkit-scrollbar-thumb {
+  margin-left: 0px;
+  width: 10px;
+  background-color: #000000;
+}
+
+/* ================== x-scrollable ================== */
+
+table.x-scrollable {
+  display: block;
+  position: relative;
+  max-width: 800px;
+  overflow-x: auto;
+}
+
+table.x-scrollable thead {
+  display: block;
+  position: relative;
+}
