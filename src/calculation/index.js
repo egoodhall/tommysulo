@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { buildSnapshot, copyOf } from './snapshot';
+import { buildSnapshot, copyOf, parseInstr } from './snapshot';
 import { issueRes, issueFun } from './transforms/issue';
 import { crunch } from './transforms/crunch';
 import { write } from './transforms/write';
@@ -76,10 +76,7 @@ const getStates = ({ instrHist }) => _.map(instrHist, (instr) => instr.state);
  * Validate input code. Makes sure the code is valid for parsing/running.
  */
 const validate = (code) => {
-  if (code && code !== '') {
-    return true;
-  }
-  return false;
+  return _.reduce(_.map(parseInstr(code), (instr) => instr !== null), (acc, bool) => bool && acc, true);
 };
 
 

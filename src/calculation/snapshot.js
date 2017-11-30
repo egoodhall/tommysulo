@@ -60,8 +60,8 @@ const parseInstr = (instructions) => {
   return _.map(_.trim(instrs).split(/\n/), (instr) => {
     // Use a regex match to pull important info
     instr = _.trim(instr);
-    const match = instr.match(/(ADD|SUB|MUL|DIV)\s+(R[0-9]+)\s+(R?[0-9]+)\s+(R?[0-9]+)\s*/) // R-type
-               || instr.match(/(LD|ST)\s+(R[0-9]+)\s+([0-9]+)\s*\(\s*(R[0-9]+)\s*\)\s*/); // Load/Store offset
+    const match = instr.match(/^(ADD|SUB|MUL|DIV)\s+(R[0-9]+)\s+(R?[0-9]+)\s+(R?[0-9]+)\s*$/) // R-type
+               || instr.match(/^(LD|ST)\s+(R[0-9]+)\s+([0-9]+)\s*\(\s*(R[0-9]+)\s*\)\s*$/); // Load/Store offset
     // If there's a match, return it, otherwise null (will crash the program)
     if (match !== null) {
       const parsedInstr = {
@@ -131,5 +131,6 @@ const buildSnapshot = (options) => {
 
 export {
   copyOf,
-  buildSnapshot
+  buildSnapshot,
+  parseInstr
 };

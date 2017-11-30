@@ -16,8 +16,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "calc": "./node_modules/babel-cli/bin/babel-node.js src/calculation/index.js"
+    "test": "react-scripts test --env=jsdom"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

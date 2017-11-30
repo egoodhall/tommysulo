@@ -21,6 +21,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      buttonStyle: "primary",
+      buttonText: 'Run',
       navKey: 1,
       instructions: "",
       configs: {
@@ -44,7 +46,6 @@ class App extends React.Component {
   }
 
   run() {
-    console.log(this.state.configs);
     if(init(this.state.instructions, this.state.configs) === true) {
       const snapshot = getSnapshot();
       // console.log(snapshot);
@@ -55,6 +56,11 @@ class App extends React.Component {
       // console.log(JSON.stringify(resStations, null, 2));
       // console.log(JSON.stringify(functionalUnits, null, 2));
       this.instrTable.updateSnapshot(instrHist, resStations, functionalUnits);
+    } else {
+      this.setState({
+        buttonStyle: 'danger',
+        buttonText: 'Invalid Code'
+      });
     }
   }
 
@@ -81,7 +87,9 @@ class App extends React.Component {
 
   handleInstructionChange(event) {
     this.setState({
-      instructions: event.target.value
+      instructions: event.target.value,
+      buttonStyle: 'primary',
+      buttonText: 'Run'
     });
   }
 
@@ -169,7 +177,7 @@ ADD R1 R1 R0" style={{height:200}} />
           <div style={{marginTop:"5px", width:972}}>
             {this.getContent()}
           </div>
-          <div className="alignRight" style={{marginTop:"5px"}}><Button bsStyle="primary" onClick={() => this.run()}>Run</Button></div>
+          <div className="alignRight" style={{marginTop:"5px"}}><Button bsStyle={this.state.buttonStyle} onClick={() => this.run()}>{this.state.buttonText}</Button></div>
         </Panel>
 
         <InstrTable onRef={ref => (this.instrTable = ref)} />
