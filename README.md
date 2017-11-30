@@ -1,5 +1,6 @@
-# Tommysulo
 A visualizer for Tomasulo's algorithm in Node.js and React.js
+
+## Try the [Demo](./demo/index.html)!
 
 ### Legal Code
 The assembly parser can handle `LD`, `ST`, `ADD`, `SUB`, `MUL`, and `DIV` instructions with the following formats:
