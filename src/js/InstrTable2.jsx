@@ -18,7 +18,7 @@ const instructions = [
       E: [ 2, 2 ],
       W: [ 3, 3 ]
     },
-    'resStation': [ 'INT 0', 1, 1 ],
+    'resStation': [ 'INT 0', 1, 2 ],
     'funcUnit': [ 'INT 0', 2, 2 ]
   },
   {
@@ -34,7 +34,7 @@ const instructions = [
       E: [ 3, 4 ],
       W: [ 5, 5 ]
     },
-    'resStation': [ 'MUL 0', 2, 2 ],
+    'resStation': [ 'MUL 0', 2, 4 ],
     'funcUnit': [ 'MUL 0', 3, 4 ]
   },
   {
@@ -50,7 +50,7 @@ const instructions = [
       E: [ 5, 6 ],
       W: [ 7, 7 ]
     },
-    'resStation': [ 'MUL 1', 3, 3 ],
+    'resStation': [ 'MUL 1', 3, 6 ],
     'funcUnit': [ 'MUL 0', 5, 6 ]
   },
   {
@@ -65,7 +65,7 @@ const instructions = [
       E: [ 5, 5 ],
       W: [ 6, 6]
     },
-    'resStation': [ 'INT 0', 4, 4 ],
+    'resStation': [ 'INT 0', 4, 5 ],
     'funcUnit': [ 'INT 0', 5, 5 ]
   },
   {
@@ -81,7 +81,7 @@ const instructions = [
       E: [ 7, 7 ],
       W: [ 8, 8 ]
     },
-    'resStation': [ 'INT 1', 5, 5 ],
+    'resStation': [ 'INT 1', 5, 7 ],
     'funcUnit': [ 'INT 0', 7, 7 ]
   }
 ];
@@ -429,8 +429,13 @@ export class InstrTable extends React.Component {
         )
 
         for (let r = inst.resStation[1]; r < inst.resStation[2]; r++) {
-          resStations[inst.resStation[0]][r+1] = null;
+          resStations[inst.resStation[0]][r] = null;
         }
+
+        // if (inst.resStation[2] - inst.resStation[1] > 1) {
+        //   resStations[inst.resStation[0]][inst.resStation[1]] = null;
+        //   resStations[inst.resStation[0]][inst.resStation[2]] = <div></div>;
+        // }
       }
     }
 

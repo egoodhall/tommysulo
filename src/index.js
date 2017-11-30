@@ -94,6 +94,7 @@ class App extends React.Component {
           <FormGroup controlId="formControlsTextarea" style={{width:970}}>
             <ControlLabel>Enter the Tomasulos pseudocode you would like to compute.</ControlLabel>
             <FormControl componentClass="textarea"
+              value={this.state.instructions}
               onChange={(event) => { this.handleInstructionChange(event); }}
               placeholder="ADD R1 1 4
 MUL R2 R1 1

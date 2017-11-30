@@ -50,6 +50,7 @@ const issue = (snapshot) => {
         unit.instr = station.instr;
         unit.cyclesRemaining = unit.latency;
         station.instr.state.funcUnit.push(unit.id, snapshot.cycle, snapshot.cycle + unit.cyclesRemaining - 1);
+        station.instr.state.resStation.push(snapshot.cycle + unit.cyclesRemaining - 1);
         station.instr.state.steps.E.push(snapshot.cycle, snapshot.cycle + unit.cyclesRemaining - 1);
         station.FU = unit.id;
       }

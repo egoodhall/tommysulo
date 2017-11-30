@@ -59,7 +59,7 @@ const issue = (snapshot) => {
           E: [],
           W: []
         },
-        resStation: [station.id, snapshot.cycle, snapshot.cycle],
+        resStation: [station.id, snapshot.cycle],
         funcUnit: []
       };
       snapshot.instrHist.push(instr);
