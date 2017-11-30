@@ -30,6 +30,9 @@ const write = (snapshot) => {
 
     // Write to any waiting reservation stations
     _(snapshot.resStations).values().flatten().filter((station) => station.instr !== null).forEach((station) => {
+      if (station.instr.op === 'ST' && station.instr.i === currStation.id) {
+        station.instr.i = result;
+      }
       if (station.instr.j === currStation.id) {
         station.instr.j = result;
       }
@@ -37,17 +40,20 @@ const write = (snapshot) => {
         station.instr.k = result;
       }
     });
+    
     // Only update if is still in the RAT
-    if (snapshot.rat[parseInt(fu.instr.i.slice(1), 10)] === currStation.id) {
+    if (fu.instr.op !== 'ST' && snapshot.rat[parseInt(fu.instr.i.slice(1), 10)] === currStation.id) {
       // Update RAT
       snapshot.rat[parseInt(fu.instr.i.slice(1), 10)] = null;
     }
 
-    // Write back to registers
-    snapshot.registers[parseInt(fu.instr.i.slice(1), 10)] = result;
+    if (fu.instr.op !== 'ST') {
+      // Write back to registers
+      snapshot.registers[parseInt(fu.instr.i.slice(1), 10)] = result;
+    }
 
     // Clear FU and reservation station
-    currStation.instr.state.steps.W.push(snapshot.cycle, snapshot.cycle)
+    currStation.instr.state.steps.W.push(snapshot.cycle, snapshot.cycle);
     currStation.instr = null;
     currStation.FU = null;
     fu.instr = null;

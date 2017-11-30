@@ -50,12 +50,19 @@ const copyOf = (json) => {
 };
 
 
+const isInt = (value) => {
+  return !isNaN(value) &&
+    parseInt(Number(value), 10) === value &&
+    !isNaN(parseInt(value, 10));
+};
+
+
 const parseInstr = (instructions) => {
   // Instructions can be separated by '\n' or ';' - first, it replaces any ';'
   // with '\n' and trims whitespace from the string
   const instrs = instructions.replace(/\s*\/\/.*;*.*[\n]?/g, '\n') // allow for simple comments
-    .replace(/[;\s]{2,}|;/g, '\n') // Multiple line delimiters removed
-    .replace(/ +/g, ' '); // Multiple spaces removed
+    .replace(/ {2,}/g, ' ') // Multiple spaces removed
+    .replace(/[;\s]{2,}|;/g, '\n'); // Multiple line delimiters removed
   console.log(instrs);
   return _.map(_.trim(instrs).split(/\n/), (instr) => {
     // Use a regex match to pull important info
@@ -67,8 +74,8 @@ const parseInstr = (instructions) => {
       const parsedInstr = {
         op: match[1],
         i: match[2],
-        j: parseInt(match[3], 10) || match[3],
-        k: parseInt(match[4], 10) || match[4]
+        j: isInt(parseInt(match[3], 10)) ? parseInt(match[3], 10) : match[3],
+        k: isInt(parseInt(match[4], 10)) ? parseInt(match[4], 10) : match[4]
       };
       return _.assign(copyOf(instructionBase), parsedInstr);
     }

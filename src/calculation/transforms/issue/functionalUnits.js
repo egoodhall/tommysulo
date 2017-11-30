@@ -29,9 +29,19 @@ const stationFilled = ({ instr, FU: fu }) => {
   return instr !== null && fu === null;
 };
 
+const isInt = (value) => {
+  return !isNaN(value) &&
+    parseInt(Number(value), 10) === value &&
+    !isNaN(parseInt(value, 10));
+};
 
-const instrReady = ({ instr: { j, k } }) => {
-  return typeof j === 'number' && isFinite(j) && typeof k === 'number' && isFinite(k);
+
+const instrReady = ({ op, i, j, k }) => {
+  console.log(`${op} ${i} ${j} ${k}`);
+  if (op === 'ST') {
+    return isInt(i) && isInt(j) && isInt(k);
+  }
+  return isInt(j) && isInt(k);
 };
 
 
@@ -39,8 +49,9 @@ const issue = (snapshot) => {
 
   console.log('Issuing to functional units');
   _(snapshot.resStations).values().flatten()
-    .filter(stationFilled).filter(instrReady)
+    .filter(stationFilled).filter((station) => instrReady(station.instr))
     .forEach((station) => {
+      console.log(station);
       // Get an available functional unit
       const unit = getAvailableFU(station.instr.op, _.flatten(_.values(snapshot.functionalUnits))) || null;
 

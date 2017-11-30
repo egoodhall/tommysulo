@@ -24,7 +24,11 @@ class App extends React.Component {
       buttonStyle: "primary",
       buttonText: 'Run',
       navKey: 1,
-      instructions: "",
+      instructions: `ADD R1 1 4
+        MUL R2 R1 1
+        MUL R0 R2 1
+        ADD R1 R2 4
+        ADD R1 R1 R0`.replace(/ {2,}/g, ''),
       configs: {
         "INT": {
           "resStations": 3,
@@ -104,11 +108,7 @@ class App extends React.Component {
             <FormControl componentClass="textarea"
               value={this.state.instructions}
               onChange={(event) => { this.handleInstructionChange(event); }}
-              placeholder="ADD R1 1 4
-MUL R2 R1 1
-MUL R0 R2 1
-ADD R1 R2 4
-ADD R1 R1 R0" style={{height:200}} />
+              style={{height:200}} />
           </FormGroup>
         );
         break;

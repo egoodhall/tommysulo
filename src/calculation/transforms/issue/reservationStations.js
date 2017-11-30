@@ -67,6 +67,9 @@ const issue = (snapshot) => {
       console.log(`  Issued '${instr.state.instruction.op} ${instr.state.instruction.i} ${instr.state.instruction.j} ${instr.state.instruction.k}'`);
 
       // Update operands if they need to wait for other instructions
+      if (instr.op === 'ST') {
+        updateWaitingOperand(instr, 'i', snapshot);
+      }
       updateWaitingOperand(instr, 'j', snapshot);
       updateWaitingOperand(instr, 'k', snapshot);
 
