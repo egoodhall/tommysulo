@@ -1,36 +1,14 @@
+import _ from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { InstrTable } from './js/InstrTable2.jsx';
+import { init, getSnapshot } from './calculation';
+
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 
 import { Panel, FormGroup, ControlLabel, FormControl, Button, Nav, NavItem, Table } from 'react-bootstrap'
-var VALID_INSTRUCTIONS = ["ADD", "SUB", "LW", "SW", "MUL", "DIV", "J", "BEQ", "BNEQ"];
-
-function checkInstructionSyntax(instruction) {
-  let reg = new RegExp('R[^0-9]{1,2}');
-
-  var parts = instruction.split(" ");
-  if (VALID_INSTRUCTIONS.indexOf(parts[0]) < 0) {
-    return 0;
-  }
-  if (parts[0] === "J") {
-    // TODO: Implement
-  } else if (parts[0][0] === "B") {
-    // TODO: Implement
-  } else {
-    if (!reg.test(parts[1])) {
-      return 1;
-    }
-    if (!reg.test(parts[2]) || isInt(parts[2])) {
-      return 2;
-    }
-    if (!reg.test(parts[3]) || isInt(parts[3])) {
-      return 3;
-    }
-  }
-}
 
 function isInt(value) {
   return !isNaN(value) &&
@@ -47,26 +25,41 @@ class App extends React.Component {
       instructions: "",
       configs: {
         "INT": {
-          "res": 4,
-          "func": 2,
-          "lat": 1
+          "resStations": 3,
+          "count": 2,
+          "latency": 1
         },
         "MUL": {
-          "res": 2,
-          "func": 1,
-          "lat": 4
+          "resStations": 2,
+          "count": 1,
+          "latency": 2
         },
         "DIV": {
-          "res": 2,
-          "func": 1,
-          "lat": 8
+          "resStations": 2,
+          "count": 1,
+          "latency": 8
         }
       }
     }
   }
 
+  run() {
+    console.log(this.state.configs);
+    if(init(this.state.instructions, this.state.configs) === true) {
+      const snapshot = getSnapshot();
+      // console.log(snapshot);
+      const resStations = _.map(_.flatten(_.values(snapshot.resStations)), (rs) => rs.id);
+      const functionalUnits = _.map(_.flatten(_.values(snapshot.functionalUnits)), (fu) => fu.id);
+      const instrHist = _.map(snapshot.instrHist, (i) => i.state);
+      // console.log(JSON.stringify(instrHist, null, 2));
+      // console.log(JSON.stringify(resStations, null, 2));
+      // console.log(JSON.stringify(functionalUnits, null, 2));
+      this.instrTable.updateSnapshot(instrHist, resStations, functionalUnits);
+    }
+  }
+
   handleSelect(itemKey) {
-    console.log(itemKey);
+    // console.log(itemKey);
     this.setState({
       navKey: itemKey
     });
@@ -89,7 +82,7 @@ class App extends React.Component {
   handleInstructionChange(event) {
     this.setState({
       instructions: event.target.value
-    })
+    });
   }
 
   getContent() {
@@ -99,10 +92,14 @@ class App extends React.Component {
       case 1:
         output = (
           <FormGroup controlId="formControlsTextarea" style={{width:970}}>
-            <ControlLabel>Enter the Tomasulos sudocode you would like to compute.</ControlLabel>
+            <ControlLabel>Enter the Tomasulos pseudocode you would like to compute.</ControlLabel>
             <FormControl componentClass="textarea"
               onChange={(event) => { this.handleInstructionChange(event); }}
-              placeholder="ADD R3 R2 R1" style={{height:200}} />
+              placeholder="ADD R1 1 4
+MUL R2 R1 1
+MUL R0 R2 1
+ADD R1 R2 4
+ADD R1 R1 R0" style={{height:200}} />
           </FormGroup>
         );
         break;
@@ -120,30 +117,30 @@ class App extends React.Component {
             <tbody>
               <tr>
                 <td>Integer Units</td>
-                <td><FormControl type="text" value={this.state.configs["INT"]["res"]}
-                  onChange={(event) => { this.handleConfigChange("INT", "res", event); }} /></td>
-                <td><FormControl type="text" value={this.state.configs["INT"]["func"]}
-                  onChange={(event) => { this.handleConfigChange("INT", "func", event); }} /></td>
-                <td><FormControl type="text" value={this.state.configs["INT"]["lat"]}
-                  onChange={(event) => { this.handleConfigChange("INT", "lat", event); }} /></td>
+                <td><FormControl type="text" value={this.state.configs["INT"]["resStations"]}
+                  onChange={(event) => { this.handleConfigChange("INT", "resStations", event); }} /></td>
+                <td><FormControl type="text" value={this.state.configs["INT"]["count"]}
+                  onChange={(event) => { this.handleConfigChange("INT", "count", event); }} /></td>
+                <td><FormControl type="text" value={this.state.configs["INT"]["latency"]}
+                  onChange={(event) => { this.handleConfigChange("INT", "latency", event); }} /></td>
               </tr>
               <tr>
                 <td>Multiply Units</td>
-                  <td><FormControl type="text" value={this.state.configs["MUL"]["res"]}
-                    onChange={(event) => { this.handleConfigChange("MUL", "res", event); }} /></td>
-                  <td><FormControl type="text" value={this.state.configs["MUL"]["func"]}
-                    onChange={(event) => { this.handleConfigChange("MUL", "func", event); }} /></td>
-                  <td><FormControl type="text" value={this.state.configs["MUL"]["lat"]}
-                    onChange={(event) => { this.handleConfigChange("MUL", "lat", event); }} /></td>
+                  <td><FormControl type="text" value={this.state.configs["MUL"]["resStations"]}
+                    onChange={(event) => { this.handleConfigChange("MUL", "resStations", event); }} /></td>
+                  <td><FormControl type="text" value={this.state.configs["MUL"]["count"]}
+                    onChange={(event) => { this.handleConfigChange("MUL", "count", event); }} /></td>
+                  <td><FormControl type="text" value={this.state.configs["MUL"]["latency"]}
+                    onChange={(event) => { this.handleConfigChange("MUL", "latency", event); }} /></td>
               </tr>
               <tr>
                 <td>Divide Units</td>
-                  <td><FormControl type="text" value={this.state.configs["DIV"]["res"]}
-                    onChange={(event) => { this.handleConfigChange("DIV", "res", event); }} /></td>
-                  <td><FormControl type="text" value={this.state.configs["DIV"]["func"]}
-                    onChange={(event) => { this.handleConfigChange("DIV", "func", event); }} /></td>
-                  <td><FormControl type="text" value={this.state.configs["DIV"]["lat"]}
-                    onChange={(event) => { this.handleConfigChange("DIV", "lat", event); }} /></td>
+                  <td><FormControl type="text" value={this.state.configs["DIV"]["resStations"]}
+                    onChange={(event) => { this.handleConfigChange("DIV", "resStations", event); }} /></td>
+                  <td><FormControl type="text" value={this.state.configs["DIV"]["count"]}
+                    onChange={(event) => { this.handleConfigChange("DIV", "count", event); }} /></td>
+                  <td><FormControl type="text" value={this.state.configs["DIV"]["latency"]}
+                    onChange={(event) => { this.handleConfigChange("DIV", "latency", event); }} /></td>
               </tr>
             </tbody>
           </Table>
@@ -160,21 +157,21 @@ class App extends React.Component {
 
     return (
       <div className="alignCenter" display={{display:"inline-block"}}>
-        <h2>Tomasulos Branch Prediction Table</h2>
+        <h2>Tomasulo's Algorithm Table</h2>
         <Panel display={{display:"inline-block"}}
-          header={<h3>Tomasulos Algorithm Sudocode</h3>}
+          header={<h3>Tomasulos Algorithm Pseudocode</h3>}
           width="wrap-content" bsStyle="primary">
           <Nav bsStyle="pills" activeKey={navKey} onSelect={handleSelect}>
-            <NavItem eventKey={1}>Sudocode</NavItem>
+            <NavItem eventKey={1}>Pseudocode</NavItem>
             <NavItem eventKey={2}>Processor Configurations</NavItem>
           </Nav>
           <div style={{marginTop:"5px", width:972}}>
             {this.getContent()}
           </div>
-          <div className="alignRight" style={{marginTop:"5px"}}><Button bsStyle="primary">Run</Button></div>
+          <div className="alignRight" style={{marginTop:"5px"}}><Button bsStyle="primary" onClick={() => this.run()}>Run</Button></div>
         </Panel>
 
-        <InstrTable />
+        <InstrTable onRef={ref => (this.instrTable = ref)} />
       </div>
     )
 

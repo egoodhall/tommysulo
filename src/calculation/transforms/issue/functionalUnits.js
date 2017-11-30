@@ -19,17 +19,8 @@ const isAluType = (op, fu) => {
 };
 
 
-const setLatency = (fu) => {
-  switch (fu.type) {
-    case 'INT': fu.cyclesRemaining = 1; break;
-    case 'MUL': fu.cyclesRemaining = 2; break;
-    case 'DIV': fu.cyclesRemaining = 8; break;
-    default: break;
-  }
-};
-
-
 const getAvailableFU = (op, functionalUnits) => {
+  console.log(functionalUnits);
   return _.find(functionalUnits, (fu) => isAluType(op, fu) && fu.cyclesRemaining === -1) || null;
 };
 
@@ -51,15 +42,15 @@ const issue = (snapshot) => {
     .filter(stationFilled).filter(instrReady)
     .forEach((station) => {
       // Get an available functional unit
-      const unit = getAvailableFU(station.instr.op, _.values(snapshot.functionalUnits).flatten()) || null;
+      const unit = getAvailableFU(station.instr.op, _.flatten(_.values(snapshot.functionalUnits))) || null;
 
       // Assign if the station's operands are ready and there is an available FU
       if (isReady(station) && unit !== null) {
         console.log(`  Issued '${station.instr.state.instruction.op} ${station.instr.state.instruction.i} ${station.instr.state.instruction.j} ${station.instr.state.instruction.k}'`);
         unit.instr = station.instr;
-        setLatency(unit);
-        station.instr.state.funcUnit.push(unit.id, snapshot.cycle, snapshot.cycle + unit.cyclesRemaining - 1)
-        station.instr.state.steps.E.push(snapshot.cycle, snapshot.cycle + unit.cyclesRemaining - 1)
+        unit.cyclesRemaining = unit.latency;
+        station.instr.state.funcUnit.push(unit.id, snapshot.cycle, snapshot.cycle + unit.cyclesRemaining - 1);
+        station.instr.state.steps.E.push(snapshot.cycle, snapshot.cycle + unit.cyclesRemaining - 1);
         station.FU = unit.id;
       }
     });

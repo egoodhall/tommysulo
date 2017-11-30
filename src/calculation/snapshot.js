@@ -51,8 +51,13 @@ const copyOf = (json) => {
 
 
 const parseInstr = (instructions) => {
-  // Instructions can be separated by '\n' or ';'
-  return _.map(instructions.split(/\n|;/), (instr) => {
+  // Instructions can be separated by '\n' or ';' - first, it replaces any ';'
+  // with '\n' and trims whitespace from the string
+  const instrs = instructions.replace(/\s*\/\/.*;*.*[\n]?/g, '\n') // allow for simple comments
+    .replace(/[;\s]{2,}|;/g, '\n') // Multiple line delimiters removed
+    .replace(/ +/g, ' '); // Multiple spaces removed
+  console.log(instrs);
+  return _.map(_.trim(instrs).split(/\n/), (instr) => {
     // Use a regex match to pull important info
     instr = _.trim(instr);
     const match = instr.match(/(ADD|SUB|MUL|DIV)\s+(R[0-9]+)\s+(R?[0-9]+)\s+(R?[0-9]+)\s*/) // R-type
@@ -78,15 +83,18 @@ const defaultOptions = {
   functionalUnits: {
     INT: {
       count: 2,
-      resStations: 3
+      resStations: 3,
+      latency: 1
     },
     MUL: {
       count: 1,
-      resStations: 2
+      resStations: 2,
+      latency: 2
     },
     DIV: {
       count: 1,
-      resStations: 2
+      resStations: 2,
+      latency: 8
     }
   }
 };
@@ -96,17 +104,19 @@ const buildSnapshot = (options) => {
 
   const { instr, functionalUnits } = _.assign(defaultOptions, options);
 
+  console.log(functionalUnits);
+
   const snapshot = copyOf(snapshotBase);
 
   _.forEach(_.keys(functionalUnits), (type) => {
     const fuDesc = functionalUnits[type];
     // Add reservation stations to snapshot
     for (var i = 0; i < fuDesc.resStations; i++) {
-      snapshot.resStations[type].push(_.assign(copyOf(resStationBase), { type: type, id: `RS ${type} ${i}` }));
+      snapshot.resStations[type].push(_.assign(copyOf(resStationBase), { type: type, id: `${type} ${i}` }));
     }
     // Add functional units to snapshot
     for (i = 0; i < fuDesc.count; i++) {
-      snapshot.functionalUnits[type].push(_.assign(copyOf(functionalUnitBase), { type: type, id: `FU ${type} ${i}` }));
+      snapshot.functionalUnits[type].push(_.assign(copyOf(functionalUnitBase), { type: type, id: `${type} ${i}`, latency: fuDesc.latency }));
     }
   });
 

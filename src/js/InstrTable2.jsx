@@ -1,283 +1,123 @@
 import React from 'react';
 import '../index.css';
-import ReactDOM from "react-dom"
+import ReactDOM from 'react-dom'
 
 import { getColor, getFuncColor } from './helper.js'
 
 const instructions = [
   {
     instruction: {
-      inst: "LW",
-      i:    "R2",
-      j:    "R1",
-      k:    ""
+      state: null,
+      op: 'ADD',
+      i: 'R1',
+      j: 1,
+      k: 4
     },
-    steps: {
-      I: [1,1],
-      E: [2,2],
-      W: [3,3],
-      C: [4,4]
+    'steps': {
+      I: [ 1, 1 ],
+      E: [ 2, 2 ],
+      W: [ 3, 3 ]
     },
-    resStation: ["Load/Store 1", 1, 1],
-    funcUnit: ["Load/Store 1", 2, 2]
+    'resStation': [ 'INT 0', 1, 1 ],
+    'funcUnit': [ 'INT 0', 2, 2 ]
   },
   {
     instruction: {
-      inst: "ADDIU",
-      i:    "R2",
-      j:    "R2",
-      k:    ""
+      state: null,
+      op: 'MUL',
+      i: 'R2',
+      j: 'R1',
+      k: 1
     },
-    steps: {
-      I: [1,1],
-      E: [3,3],
-      W: [4,4],
-      C: [5,5]
+    'steps': {
+      I: [ 2, 2 ],
+      E: [ 3, 4 ],
+      W: [ 5, 5 ]
     },
-    resStation: ["INT 1", 1, 2],
-    funcUnit: ["INT 1", 3, 3]
+    'resStation': [ 'MUL 0', 2, 2 ],
+    'funcUnit': [ 'MUL 0', 3, 4 ]
   },
   {
     instruction: {
-      inst: "SW",
-      i:    "",
-      j:    "R2",
-      k:    "R1"
+      state: null,
+      op: 'MUL',
+      i: 'R0',
+      j: 'R2',
+      k: 1
     },
-    steps: {
-      I: [2,2],
-      E: [4,5],
-      W: [6,6],
-      C: [7,7]
+    'steps': {
+      I: [ 3, 3 ],
+      E: [ 5, 6 ],
+      W: [ 7, 7 ]
     },
-    resStation: ["Load/Store 1", 2, 3],
-    funcUnit: ["Load/Store 1", 4, 5]
+    'resStation': [ 'MUL 1', 3, 3 ],
+    'funcUnit': [ 'MUL 0', 5, 6 ]
   },
   {
     instruction: {
-      inst: "ADDIU",
-      i:    "R2",
-      j:    "R2",
-      k:    ""
+      state: null,
+      op: 'ADD',
+      i: 'R1',
+      j: 'R2',
+      k: 4
     },
-    steps: {
-      I: [2,2],
-      E: [4,4],
-      W: [5,5],
-      C: [7,7]
+    'steps': { I: [ 4, 4 ],
+      E: [ 5, 5 ],
+      W: [ 6, 6]
     },
-    resStation: ["INT 2", 2, 3],
-    funcUnit: ["INT 1", 4, 4]
+    'resStation': [ 'INT 0', 4, 4 ],
+    'funcUnit': [ 'INT 0', 5, 5 ]
   },
   {
     instruction: {
-      inst: "BNE",
-      i:    "",
-      j:    "R2",
-      k:    "R3"
+      state: null,
+      op: 'ADD',
+      i: 'R1',
+      j: 'R1',
+      k: 'R0'
     },
-    steps: {
-      I: [5,5],
-      E: [6,6],
-      W: [7,7],
-      C: [8,8]
+    'steps': {
+      I: [ 5, 5 ],
+      E: [ 7, 7 ],
+      W: [ 8, 8 ]
     },
-    resStation: ["INT 1", 5, 5],
-    funcUnit: ["INT 1", 6, 6]
-  },
-  {
-    instruction: {
-      inst: "LW",
-      i:    "R2",
-      j:    "R1",
-      k:    ""
-    },
-    steps: {
-      I: [7,7],
-      E: [8,8],
-      W: [9,9],
-      C: [10,10]
-    },
-    resStation: ["Load/Store 1", 7, 7],
-    funcUnit: ["Load/Store 1", 8, 8]
-  },
-  {
-    instruction: {
-      inst: "ADDIU",
-      i:    "R2",
-      j:    "R2",
-      k:    ""
-    },
-    steps: {
-      I: [8,8],
-      E: [9,9],
-      W: [10,10],
-      C: [11,11]
-    },
-    resStation: ["INT 1", 8, 8],
-    funcUnit: ["INT 1", 9, 9]
-  },
-  {
-    instruction: {
-      inst: "SW",
-      i:    "",
-      j:    "R2",
-      k:    "R1"
-    },
-    steps: {
-      I: [8,8],
-      E: [10,11],
-      W: [12,12],
-      C: [13,13]
-    },
-    resStation: ["Load/Store 1", 8, 9],
-    funcUnit: ["Load/Store 1", 10, 11]
-  },
-  {
-    instruction: {
-      inst: "ADDIU",
-      i:    "R1",
-      j:    "R1",
-      k:    ""
-    },
-    steps: {
-      I: [9,9],
-      E: [10,10],
-      W: [11,11],
-      C: [13,13]
-    },
-    resStation: ["INT 1", 9, 9],
-    funcUnit: ["INT 1", 10, 10]
-  },
-  {
-    instruction: {
-      inst: "BNE",
-      i:    "",
-      j:    "R2",
-      k:    "R3"
-    },
-    steps: {
-      I: [11,11],
-      E: [12,12],
-      W: [13,13],
-      C: [14,14]
-    },
-    resStation: ["INT 1", 11, 11],
-    funcUnit: ["INT 1", 12, 12]
-  },
-  {
-    instruction: {
-      inst: "LW",
-      i:    "R2",
-      j:    "R1",
-      k:    ""
-    },
-    steps: {
-      I: [12,12],
-      E: [13,13],
-      W: [14,14],
-      C: [15,15]
-    },
-    resStation: ["Load/Store 1", 12, 12],
-    funcUnit: ["Load/Store 1", 13, 13]
-  },
-  {
-    instruction: {
-      inst: "ADDIU",
-      i:    "R2",
-      j:    "R2",
-      k:    ""
-    },
-    steps: {
-      I: [14,14],
-      E: [15,15],
-      W: [16,16],
-      C: [17,17]
-    },
-    resStation: ["INT 1", 14, 14],
-    funcUnit: ["INT 1", 15, 15]
-  },
-  {
-    instruction: {
-      inst: "SW",
-      i:    "",
-      j:    "R2",
-      k:    "R1"
-    },
-    steps: {
-      I: [14,14],
-      E: [16,17],
-      W: [18,18],
-      C: [19,19]
-    },
-    resStation: ["Load/Store 1", 14, 15],
-    funcUnit: ["Load/Store 1", 16, 17]
-  },
-  {
-    instruction: {
-      inst: "ADDIU",
-      i:    "R1",
-      j:    "R1",
-      k:    ""
-    },
-    steps: {
-      I: [15,15],
-      E: [16,16],
-      W: [17,17],
-      C: [19,19]
-    },
-    resStation: ["INT 1", 15, 15],
-    funcUnit: ["INT 1", 16, 16]
-  },
-  {
-    instruction: {
-      inst: "BNE",
-      i:    "",
-      j:    "R2",
-      k:    "R3"
-    },
-    steps: {
-      I: [16,16],
-      E: [17,17],
-      W: [18,18],
-      C: [20,20]
-    },
-    resStation: ["INT 1", 16, 16],
-    funcUnit: ["INT 1", 17, 17]
+    'resStation': [ 'INT 1', 5, 5 ],
+    'funcUnit': [ 'INT 0', 7, 7 ]
   }
 ];
 
 const resStations = [
-  "Load/Store 1",
-  "Load/Store 2",
-  "Load/Store 3",
-  "INT 1",
-  "INT 2",
-  "INT 3",
+  'INT 0',
+  'INT 1',
+  'INT 2',
+  'MUL 0',
+  'MUL 1',
+  'DIV 0',
+  'DIV 1'
 ];
 
 const funcUnits = [
-  "Load/Store 1",
-  "INT 1"
+  'INT 0',
+  'INT 1',
+  'MUL 0',
+  'DIV 0'
 ];
 
 const HEIGHT = 10;
 
 function getState(instr, step) {
   if (step < instr.steps.I[0]) {
-    return "";
+    return '';
   } else if (instr.steps.I[0] <= step && step <= instr.steps.I[1]) {
-    return "I";
+    return 'I';
   } else if (instr.steps.E[0] <= step && step <= instr.steps.E[1]) {
-    return "E";
+    return 'E';
   } else if (instr.steps.W[0] <= step && step <= instr.steps.W[1]) {
-    return "W";
-  } else if (instr.steps.C[0] <= step && step <= instr.steps.C[1]) {
-    return "C";
-  } else if (instr.steps.C[0] < step) {
-    return "";
+    return 'W';
+  } else if (instr.steps.W[0] < step) {
+    return '';
   } else {
-    return "-";
+    return '-';
   }
 }
 
@@ -297,27 +137,22 @@ function getColspan(instr, step) {
       return instr.steps.W[1] - instr.steps.W[0] + 1;
     else
       return 0;
-  } else if (instr.steps.C[0] <= step && step <= instr.steps.C[1]) {
-    if (instr.steps.C[0] === step)
-      return instr.steps.C[1] - instr.steps.C[0] + 1;
-    else
-      return 0;
   } else {
     return 1;
   }
 }
 
-function getHeight() {
-  return instructions.length;
+function getHeight(instr) {
+  return instr.length;
 }
 
-function getWidth() {
+function getWidth(instr) {
   let width = 0;
 
-  for (let i = 0; i < instructions.length; i++) {
-    let item = instructions[i];
-    if (item.steps.C[1] > width) {
-      width = item.steps.C[1]
+  for (let i = 0; i < instr.length; i++) {
+    let item = instr[i];
+    if (item.steps.W[1] > width) {
+      width = item.steps.W[1]
     }
   }
 
@@ -341,20 +176,38 @@ export class InstrTable extends React.Component {
       funcUnits: funcUnits.map((func, i) => {
         return { func, hovered: -1 }
       }),
-      width: getWidth(),
-      height: getHeight()
-    };
+      width: getWidth(instructions),
+      height: getHeight(instructions)
+    }
+  }
+
+  updateSnapshot(instructions, resStations, funcUnits) {
+    this.setState({
+      location: 0,
+      lastScrollPos: 0,
+      instructions: instructions.map((inst, i) => {
+        return { ...inst, hovered: false }
+      }),
+      resStations: resStations.map((res, i) => {
+        return { res, hovered: -1 }
+      }),
+      funcUnits: funcUnits.map((func, i) => {
+        return { func, hovered: -1 }
+      }),
+      width: getWidth(instructions),
+      height: getHeight(instructions)
+    });
   }
 
   componentDidMount() {
     const table = ReactDOM.findDOMNode(this.refs.table);
-
+    this.props.onRef(this)
     table.addEventListener('onScroll', this.handleScroll.bind(this));
   }
 
   componentWillUnmount() {
     const table = ReactDOM.findDOMNode(this.refs.table);
-
+    this.props.onRef(undefined)
     table.removeEventListener('scroll', this.handleScroll.bind(this));
   }
 
@@ -366,9 +219,9 @@ export class InstrTable extends React.Component {
     let stop = 0;
 
     for (let i = this.state.location; i < this.state.location + HEIGHT; i++) {
-      let item = instructions[i];
-      if (item.steps.C[1] > stop) {
-        stop = item.steps.C[1]
+      let item = this.state.instructions[i];
+      if (item.steps.W[1] > stop) {
+        stop = item.steps.W[1]
       }
     }
 
@@ -378,11 +231,11 @@ export class InstrTable extends React.Component {
   getWidth() {
     let maxWidth = 0;
     for (let i = 0; i < this.state.instructions.length - HEIGHT; i++) {
-      if (this.state.instructions[i + HEIGHT].steps.C[1] - this.state.instructions[i].steps.I[0] > maxWidth) {
-        maxWidth = this.state.instructions[i + HEIGHT].steps.C[1] - this.state.instructions[i].steps.I[0];
+      if (this.state.instructions[i + HEIGHT].steps.W[1] - this.state.instructions[i].steps.I[0] > maxWidth) {
+        maxWidth = this.state.instructions[i + HEIGHT].steps.W[1] - this.state.instructions[i].steps.I[0];
       }
     }
-    return maxWidth + 1;
+    return Math.max(maxWidth + 1, 15);
   }
 
   getHeaderSteps() {
@@ -462,7 +315,7 @@ export class InstrTable extends React.Component {
             onMouseLeave={() => { this.hoverInstruction({}, -1) } }
             >
             <td>{i+1}</td>
-            <td width={60}>{inst.instruction.inst}</td>
+            <td width={60}>{inst.instruction.op}</td>
             <td>{inst.instruction.i}</td>
             <td>{inst.instruction.j}</td>
             <td>{inst.instruction.k}</td>
@@ -482,7 +335,7 @@ export class InstrTable extends React.Component {
   }
 
   handleScroll(event) {
-    console.log("Scroll");
+    console.log('Scroll');
     if(this.state.lastScrollPos > event.currentTarget.scrollTop) {
       this.goUp(event);
     } else if(this.state.lastScrollPos < event.currentTarget.scrollTop) {
@@ -495,10 +348,12 @@ export class InstrTable extends React.Component {
       case 37:
       case 38:
         this.goUp(event);
+        this.hoverInstruction({}, -1)
         break;
       case 39:
       case 40:
         this.goDown(event);
+        this.hoverInstruction({}, -1)
         break;
       default:
         break;
@@ -537,7 +392,7 @@ export class InstrTable extends React.Component {
       }
     }
 
-    for (let i = this.state.location; i < this.state.location + HEIGHT; i++) {
+    for (let i = this.state.location; i < Math.min(this.state.location + HEIGHT, this.state.instructions.length); i++) {
       let inst = this.state.instructions[i];
       if (inst.resStation) {
         resStations[inst.resStation[0]][inst.resStation[1]-1] = (
@@ -565,11 +420,11 @@ export class InstrTable extends React.Component {
               });
             }}
             className={
-              getFuncColor(inst.instruction.inst,
+              getFuncColor(inst.instruction.op,
               inst.resStation[1] === this.state.resStations.find((item) => {
                 return item.res === inst.resStation[0];
               }).hovered)}>
-            {inst.instruction.inst}
+            {inst.instruction.op}
           </td>
         )
 
@@ -607,13 +462,14 @@ export class InstrTable extends React.Component {
       }
     }
 
-    for (let i = this.state.location; i < this.state.location + HEIGHT; i++) {
+    for (let i = this.state.location; i < Math.min(this.state.location + HEIGHT, this.state.instructions.length); i++) {
       let inst = this.state.instructions[i];
-
+      
       if (inst.funcUnit) {
+        const span = inst.funcUnit[2] - inst.funcUnit[1] + 1;
         funcUnits[inst.funcUnit[0]][inst.funcUnit[1]-1] = (
           <td key={key++}
-            colSpan={inst.funcUnit[2] - inst.funcUnit[1] + 1}
+            colSpan={span}
             onMouseEnter={() => {
               let funcUnits = this.state.funcUnits;
               funcUnits.find((item) => {return item.func === inst.funcUnit[0]; }).hovered = inst.funcUnit[1];
@@ -635,15 +491,17 @@ export class InstrTable extends React.Component {
               });
             }}
             className={
-              getFuncColor(inst.instruction.inst, inst.funcUnit[1] === this.state.funcUnits.find((item) => { return item.func === inst.funcUnit[0]; }).hovered)
+              getFuncColor(inst.instruction.op, inst.funcUnit[1] === this.state.funcUnits.find((item) => { 
+                return item.func === inst.funcUnit[0]; }).hovered)
             }>
-            {inst.instruction.inst}
+            {inst.instruction.op}
           </td>
         )
 
         for (let r = inst.funcUnit[1]; r < inst.funcUnit[2]; r++) {
           funcUnits[inst.funcUnit[0]][r+1] = null;
         }
+        funcUnits[inst.funcUnit[0]].splice(inst.funcUnit[1], 1)
       }
     }
 
@@ -667,7 +525,7 @@ export class InstrTable extends React.Component {
   render() {
     return (
       <table className='inst-table'
-        ref={"table"}
+        ref={'table'}
         tabIndex={0}
         onScroll={this.handleScroll.bind(this) }
         onKeyDown={this.handleKeyPress.bind(this) }
@@ -703,13 +561,13 @@ export class InstrTable extends React.Component {
           <tr>
             <th colSpan={5}>Current View</th>
             <th colSpan={this.getWidth()}>
-              <input type="range"
+              <input type='range'
                 min={0}
                 max={this.state.instructions.length - HEIGHT}
-                ref="slider"
+                ref='slider'
                 onChange={this.handleSlider.bind(this)}
                 value={this.state.location}
-                className="slider" id="myRange" />
+                className='slider' id='myRange' />
             </th>
           </tr>
         </tfoot>
@@ -718,4 +576,4 @@ export class InstrTable extends React.Component {
 
   }
 
-}
+};

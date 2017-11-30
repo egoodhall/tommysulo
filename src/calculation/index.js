@@ -10,6 +10,7 @@ import { write } from './transforms/write';
 //============//
 
 let leadSnapshot = null;
+let initialized = false;
 const allSnapshots = [];
 
 //============//
@@ -41,7 +42,12 @@ const snapshotWorking = (snapshot) => {
  * are at the chosen cycle, and return that snapshot.
  */
 const getSnapshot = (cycle) => {
-  cycle = (cycle <= 0) ? 1 : cycle;
+  if (!initialized) {
+    throw new Error('Not Initialized');
+  }
+  if (cycle) {
+    cycle = (cycle <= 0) ? 1 : cycle;
+  }
   // If we already have the snapshot, give it
   if (allSnapshots.length >= cycle) {
     return allSnapshots[cycle - 1];
@@ -49,7 +55,7 @@ const getSnapshot = (cycle) => {
 
   // Otherwise, calculate either until we do, or we hit the end
   let i = allSnapshots.length - 1;
-  while (i === 0 || snapshotWorking(leadSnapshot) && i < cycle) {
+  while (i === 0 || snapshotWorking(leadSnapshot) && ((!cycle && i < 1000) || i < cycle)) {
     console.log(`\n\n---- Tick: ${++i} ----\n\n`);
     leadSnapshot.cycle = i;
     leadSnapshot = step(leadSnapshot);
@@ -70,7 +76,7 @@ const getStates = ({ instrHist }) => _.map(instrHist, (instr) => instr.state);
  * Validate input code. Makes sure the code is valid for parsing/running.
  */
 const validate = (code) => {
-  if (code) {
+  if (code && code !== '') {
     return true;
   }
   return false;
@@ -81,11 +87,13 @@ const validate = (code) => {
  * Initialize. This should be run before requesting a snapshot to ensure the
  * first one is built and ready.
  */
-const init = (instr) => {
+const init = (instr, config) => {
+  console.log(config);
   if (validate(instr)) {
-    leadSnapshot = buildSnapshot({ instr });
+    leadSnapshot = buildSnapshot({ instr, functionalUnits: config });
     allSnapshots.length = 0;
     allSnapshots.push(copyOf(leadSnapshot));
+    initialized = true;
     return true;
   }
   return false;
@@ -95,27 +103,27 @@ const init = (instr) => {
 //===========================//
 // MAIN CODE (DEMONSTRATION) //
 //===========================//
-if (typeof require !== undefined && require.main === module) {
+// if (typeof require !== undefined && require.main === module) {
 
-  // Have the code
-  const code = _.trim(`
-  ADD R1 1 4
-  SUB R0 R1 1
-  ADD R2 R1 R0
-  ADD R1 2 4
-  `);
+//   // Have the code
+//   const code = _.trim(`
+//   ADD R1 1 4
+//   SUB R0 R1 1
+//   ADD R2 R1 R0
+//   ADD R1 2 4
+//   `);
 
-  // Validate the code
-  const valid = init(code);
+//   // Validate the code
+//   const valid = init(code);
 
-  // If it's valid, you can request a snapshot!
-  if (valid) {
-    console.log('7', getStates(getSnapshot(7)), null, 2);
-  } else {
-    console.log('Code invalid');
-  }
+//   // If it's valid, you can request a snapshot!
+//   if (valid) {
+//     console.log('7', getStates(getSnapshot(7)), null, 2);
+//   } else {
+//     console.log('Code invalid');
+//   }
 
-}
+// }
 //===========================//
 
 export {

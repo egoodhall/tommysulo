@@ -1,6 +1,6 @@
 export function getColor(state, hovered) {
   let output = '';
-  switch(state) {
+  switch (state) {
     case 'I':
       output = 'red';
       break;
@@ -8,10 +8,7 @@ export function getColor(state, hovered) {
       output = 'yellow';
       break;
     case 'W':
-      output = "green";
-      break;
-    case 'C':
-      output = 'purple';
+      output = 'green';
       break;
     case '-':
       output = 'grey';
@@ -26,17 +23,23 @@ export function getColor(state, hovered) {
 export function getFuncColor(state, hovered) {
   let output = '';
   switch(state) {
-    case 'LW':
+    case 'ADD':
       output = 'orange';
       break;
-    case 'SW':
+    case 'SUB':
       output = 'magenta';
       break;
-    case 'ADDIU':
-      output = "cyan";
+    case 'MUL':
+      output = 'cyan';
       break;
-    case 'BNE':
+    case 'DIV':
       output = 'yellow-green';
+      break;
+    case 'LD':
+      output = 'purple';
+      break;
+    case 'LD':
+      output = 'blue';
       break;
     default:
       return 'inherit-color';
