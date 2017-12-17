@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <div>
+
+        <h1>
+            <a href="https://emm035.github.io/tommysulo/">tommysulo</a>
+        </h1>
+
+
+        <p>A visualizer for Tomasulo's algorithm in Node.js and React.js</p>
+
+        <h2 id="try-it-out">
+            <a href="https://emm035.github.io/tommysulo/demo/index.html">Try it out!</a>
+            <a href="#try-it-out" aria-label="Anchor link for: try it out" data-anchorjs-icon=""
+                style="font: normal normal normal normal 1em/1 anchorjs-icons; padding-left: 0.375em;"></a>
+        </h2>
+
+        <h3 id="legal-code">Legal Code
+            <a href="#legal-code" aria-label="Anchor link for: legal code" data-anchorjs-icon=""
+                style="font: normal normal normal normal 1em/1 anchorjs-icons; padding-left: 0.375em;"></a>
+        </h3>
+        <p>The assembly parser can handle
+            <code>LD</code>,
+            <code>ST</code>,
+            <code>ADD</code>,
+            <code>SUB</code>,
+            <code>MUL</code>, and
+            <code>DIV</code> instructions with the following formats:</p>
+        <div>
+            <div>
+                <pre><code>------------------
+LD  REG  INT(REG)
+ST 
+------------------
+ADD  REG  [REG|INT]  [REG|INT]
+SUB
+MUL
+DIV
+</code></pre>
+            </div>
+        </div>
+        <p>Registers are denoted with
+            <code>R#</code> and integers are just the immediate value. For example:</p>
+        <div>
+            <div>
+                <pre><code>ADD R0 1 2    // Add 1 &amp; 2 and store the result in R0
+ST  R0 2(R1)  // Store the value in R0 at R1 + 2 in memory
+LD  R0 2(R2)  // Load the value in memory at R2 + 2 into R0
+
+</code></pre>
+            </div>
+        </div>
+        <p>
+            <strong>Note:</strong> The parenthesis are required in
+            <code>LD</code> and
+            <code>ST</code> instructions</p>
+
+        <p>Comments start with a
+            <code>//</code> and end with a newline</p>
+
+        <h3 id="contributors">Contributors
+            <a href="#contributors" aria-label="Anchor link for: contributors" data-anchorjs-icon=""
+                style="font: normal normal normal normal 1em/1 anchorjs-icons; padding-left: 0.375em;"></a>
+        </h3>
+        <ul>
+            <li>
+                <a href="https://github.com/greenboigz">Sam Greenberg</a>
+            </li>
+            <li>
+                <a href="https://ericmarshall.codes/">Eric Marshall</a>
+            </li>
+            <li>
+                <a href="https://github.com/lam046">Lukas Muñoz</a>
+            </li>
+            <li>
+                <a href="https://github.com/jordansekky">Jordan Sechler</a>
+            </li>
+        </ul>
+
+    </div>
+</body>
+
+</html>

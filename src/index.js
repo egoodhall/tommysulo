@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { InstrTable } from './js/InstrTable2.jsx';
+import { HelpModal } from './js/HelpModal.jsx';
 import { init, getSnapshot } from './calculation';
 
 import './index.css';
@@ -16,6 +17,15 @@ function isInt(value) {
     !isNaN(parseInt(value, 10));
 }
 
+const footerStyle = {
+  position: 'absolute',
+  right: 0,
+  bottom: 0,
+  left: 0,
+  padding: '1 rem',
+  textAlign: 'center'
+};
+
 class App extends React.Component {
 
   constructor(props) {
@@ -24,6 +34,7 @@ class App extends React.Component {
       buttonStyle: "primary",
       buttonText: 'Run',
       navKey: 1,
+      showHelp: false,
       instructions: `ADD R1 1 4
         MUL R2 R1 1
         MUL R0 R2 1
@@ -179,8 +190,13 @@ class App extends React.Component {
           </div>
           <div className="alignRight" style={{marginTop:"5px"}}><Button bsStyle={this.state.buttonStyle} onClick={() => this.run()}>{this.state.buttonText}</Button></div>
         </Panel>
-
-        <InstrTable onRef={ref => (this.instrTable = ref)} />
+        <div>
+          <InstrTable onRef={ref => (this.instrTable = ref)} />
+        </div>
+        <div>
+          <HelpModal isOpen={this.state.showHelp} requestClose={ () => this.setState({ showHelp: false })} />
+          <Button bsStyle='default' style={{ margin: '0.75em' }} onClick={() => this.setState({ showHelp: true })}>Help/About</Button>
+        </div>
       </div>
     )
 
